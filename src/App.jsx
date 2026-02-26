@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 import Navbar from './components/Navbar'
 import LeftSidebar from './components/LeftSidebar'
 import RightSidebar from './components/RightSidebar'
@@ -53,14 +53,15 @@ const INITIAL_POSTS = [
 ]
 
 export default function App() {
-  const [posts, setPosts]         = useState(INITIAL_POSTS)
-  const [toastVisible, setToast]  = useState(false)
-  const toastTimer                = useRef(null)
+  const [posts, setPosts]   = useState(INITIAL_POSTS)
+  const [toasts, setToasts] = useState([])
 
   const showDeadLinkError = useCallback(() => {
-    if (toastTimer.current) clearTimeout(toastTimer.current)
-    setToast(true)
-    toastTimer.current = setTimeout(() => setToast(false), 2500)
+    const id = Date.now() + Math.random()
+    setToasts((prev) => [...prev, { id }])
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id))
+    }, 2500)
   }, [])
 
   // BUG 1: content is wrapped with mismatched HTML tags before storing
@@ -95,7 +96,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-fb-bg">
-      <ErrorToast visible={toastVisible} />
+      <ErrorToast toasts={toasts} />
       <Navbar onDeadLink={showDeadLinkError} />
       <div className="max-w-[1250px] mx-auto pt-[60px] grid grid-cols-[280px_1fr_280px] gap-4 px-4">
         <LeftSidebar onDeadLink={showDeadLinkError} />
