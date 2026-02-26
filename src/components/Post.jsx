@@ -63,10 +63,10 @@ export default function Post({ post, onAddLike, onSubtractLike, onAddComment, on
       {/* Reaction counts */}
       <div className="px-4 py-1.5 flex items-center justify-between text-fb-secondary text-sm border-b border-fb-border">
         <div className="flex items-center gap-1">
-          {post.likes > 0 && (
+          {post.likes !== 0 && (
             <>
               <span className="flex items-center justify-center w-5 h-5 rounded-full bg-fb-blue text-white text-xs">👍</span>
-              {/* BUG 4: likes can go negative — no floor at 0 */}
+              {/* BUG: likes can go negative via Share — no floor */}
               <span className={`${post.likes < 0 ? 'text-red-500 font-bold' : ''}`}>
                 {post.likes < 0 ? `${post.likes} (negative?!)` : post.likes}
               </span>
