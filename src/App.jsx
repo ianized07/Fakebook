@@ -1,0 +1,103 @@
+import { useState } from 'react'
+import Navbar from './components/Navbar'
+import LeftSidebar from './components/LeftSidebar'
+import RightSidebar from './components/RightSidebar'
+import NewsFeed from './components/NewsFeed'
+
+const INITIAL_POSTS = [
+  {
+    id: 1,
+    user: 'Alex Reyes',
+    avatar: 'https://i.pravatar.cc/40?img=11',
+    timestamp: 'February 31, 2025 at 10:30 AM',
+    content: 'Just deployed to production on a Friday. What could go wrong? 🚀 #devlife #YOLO',
+    image: null,
+    likes: 42,
+    comments: 24,
+    shares: 5,
+    liked: false,
+  },
+  {
+    id: 2,
+    user: 'Maria Santos',
+    avatar: 'https://fakebook-broken-cdn.xyz/avatars/maria.jpg',
+    timestamp: '2 hours ago',
+    content: 'The client said "just a small change" and now the entire app is on fire. 🔥 Sending prayers for the on-call engineer.',
+    image: null,
+    likes: 0,
+    comments: 8,
+    shares: 2,
+    liked: false,
+  },
+  {
+    id: 3,
+    user: 'Dev Community PH',
+    avatar: 'https://i.pravatar.cc/40?img=33',
+    timestamp: '5 hours ago',
+    content: 'Reminder: It\'s not a bug, it\'s an undocumented feature. 😅 Share this with your QA team.',
+    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80',
+    likes: 156,
+    comments: 43,
+    shares: 22,
+    liked: false,
+  },
+  {
+    id: 4,
+    user: 'Juan dela Cruz',
+    avatar: 'https://i.pravatar.cc/40?img=52',
+    timestamp: 'Yesterday at 3:14 PM',
+    content: 'PSA: Please stop pushing directly to main. We have a staging environment for a reason. 😤',
+    image: null,
+    likes: 201,
+    comments: 57,
+    shares: 41,
+    liked: false,
+  },
+]
+
+export default function App() {
+  const [posts, setPosts] = useState(INITIAL_POSTS)
+
+  const addPost = (content) => {
+    const newPost = {
+      id: Date.now(),
+      user: 'You',
+      avatar: 'https://i.pravatar.cc/40?img=68',
+      timestamp: 'Just now',
+      content,
+      image: null,
+      likes: 0,
+      comments: 0,
+      shares: 0,
+      liked: false,
+    }
+    setPosts([newPost, ...posts])
+  }
+
+  const toggleLike = (id) => {
+    setPosts(posts.map((p) => {
+      if (p.id !== id) return p
+      if (p.liked) {
+        return { ...p, liked: false, likes: p.likes - 1 }
+      }
+      return { ...p, liked: true, likes: p.likes + 1 }
+    }))
+  }
+
+  const addComment = (id) => {
+    setPosts(posts.map((p) =>
+      p.id === id ? { ...p, comments: p.comments } : p
+    ))
+  }
+
+  return (
+    <div className="min-h-screen bg-fb-bg">
+      <Navbar />
+      <div className="max-w-[1250px] mx-auto pt-[60px] grid grid-cols-[280px_1fr_280px] gap-4 px-4">
+        <LeftSidebar />
+        <NewsFeed posts={posts} onAddPost={addPost} onToggleLike={toggleLike} onAddComment={addComment} />
+        <RightSidebar />
+      </div>
+    </div>
+  )
+}
