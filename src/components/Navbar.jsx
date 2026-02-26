@@ -16,13 +16,6 @@ const NOTIFICATIONS = [
   { id: 3, text: 'Dev Community PH sent you a friend request.', time: '3 hrs ago', read: true },
 ]
 
-const NAV_ACTIONS = {
-  Freinds:     'duplicate',
-  Watch:       'watch',
-  Marketplace: 'market',
-  Groups:      'dead',
-}
-
 export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMarketMode }) {
   const [search, setSearch]           = useState('')
   const [showNotif, setShowNotif]     = useState(false)
@@ -33,12 +26,11 @@ export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMa
     { id: 1, from: 'system', text: 'Messenger — 5 active conversations' },
   ])
 
-  const handleNavClick = (label) => {
-    const action = NAV_ACTIONS[label]
-    if (action === 'duplicate') onDuplicatePosts()
-    else if (action === 'watch')  onWatchMode()
-    else if (action === 'market') onMarketMode()
-    else onDeadLink()
+  const NAV_HANDLERS = {
+    Freinds:     onDuplicatePosts,
+    Watch:       onWatchMode,
+    Marketplace: onMarketMode,
+    Groups:      onDeadLink,
   }
 
   const sendChat = () => {
@@ -96,7 +88,7 @@ export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMa
         {NAV_ICONS.map((n) => (
           <button
             key={n.label}
-            onClick={!n.active ? () => handleNavClick(n.label) : undefined}
+            onClick={!n.active ? (NAV_HANDLERS[n.label] || onDeadLink) : undefined}
             className={`flex flex-col items-center justify-center w-24 h-[52px] rounded-lg text-xl transition-colors border-b-2 ${
               n.active
                 ? 'border-fb-blue text-fb-blue'
