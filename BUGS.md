@@ -1,6 +1,6 @@
 # Fakebook — Bug Documentation
 
-**Total bugs: 24**
+**Total bugs: 25**
 
 All bugs are intentional and designed for QA exam/testing purposes.
 
@@ -17,6 +17,7 @@ All bugs are intentional and designed for QA exam/testing purposes.
 | 5 | **Share subtracts likes (goes negative)** | Click Share on any post | Share count increments | Like count decrements by 1; can go into negative numbers (shown in red as `-1 (negative?!)`) |
 | 6 | **Comment count hardcoded** | Add a comment to any post | Comment count in the header increments | Comment count never changes regardless of how many comments are added |
 | 7 | **Comment doubling** | Submit any comment | Comment appears once | Comment appears **twice** in the list immediately after submitting |
+| 25 | **Phantom comment counts** | Click the comment count on any existing post (e.g. "43 Comments") | The listed number of comments appear | Comment section opens completely empty — the displayed count has no corresponding comments |
 
 ---
 
