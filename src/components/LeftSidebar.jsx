@@ -5,7 +5,7 @@ const NAV_ITEMS = [
   { icon: '🛍️', label: 'Marketplace' },
   { icon: '📺', label: 'Watch' },
   { icon: '📅', label: 'Events' },
-  { icon: '🎮', label: 'Gaming' },
+  { icon: '🎮', label: 'Gaming', link: 'https://www.cliffianmurillo.site/bug-game' },
   { icon: '📰', label: 'News Feed' },
 ]
 
@@ -19,16 +19,29 @@ export default function LeftSidebar({ onDeadLink }) {
   return (
     <aside className="sticky top-[68px] h-[calc(100vh-68px)] overflow-y-auto py-2 scrollbar-hide">
       <div className="space-y-1">
-        {NAV_ITEMS.map((item) => (
-          <button
-            key={item.label}
-            onClick={onDeadLink}
-            className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-fb-hover transition-colors text-left"
-          >
-            <span className="text-2xl w-9 h-9 flex items-center justify-center">{item.icon}</span>
-            <span className="font-medium text-fb-text text-[15px]">{item.label}</span>
-          </button>
-        ))}
+        {NAV_ITEMS.map((item) =>
+          item.link ? (
+            <a
+              key={item.label}
+              href={item.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-fb-hover transition-colors text-left"
+            >
+              <span className="text-2xl w-9 h-9 flex items-center justify-center">{item.icon}</span>
+              <span className="font-medium text-fb-text text-[15px]">{item.label}</span>
+            </a>
+          ) : (
+            <button
+              key={item.label}
+              onClick={onDeadLink}
+              className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-fb-hover transition-colors text-left"
+            >
+              <span className="text-2xl w-9 h-9 flex items-center justify-center">{item.icon}</span>
+              <span className="font-medium text-fb-text text-[15px]">{item.label}</span>
+            </button>
+          )
+        )}
       </div>
 
       <hr className="my-3 border-fb-border" />
