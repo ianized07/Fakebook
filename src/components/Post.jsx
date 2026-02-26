@@ -1,13 +1,15 @@
 import { useState } from 'react'
 
-export default function Post({ post, onToggleLike, onAddComment }) {
+export default function Post({ post, onAddLike, onAddComment, onDeadLink }) {
   const [showComments, setShowComments] = useState(false)
   const [commentInput, setCommentInput]   = useState('')
   const [localComments, setLocalComments] = useState([])
 
   const handleComment = () => {
     if (!commentInput.trim()) return
-    setLocalComments([...localComments, { id: Date.now(), text: commentInput, user: 'You' }])
+    // BUG 3: comment is pushed twice — appears doubled in the list
+    const newComment = { id: Date.now(), text: commentInput, user: 'You' }
+    setLocalComments([...localComments, newComment, newComment])
     setCommentInput('')
     onAddComment(post.id)
   }
@@ -37,17 +39,16 @@ export default function Post({ post, onToggleLike, onAddComment }) {
           <p className="text-xs text-fb-secondary">{post.timestamp} · 🌐</p>
         </div>
         <div className="flex items-center gap-1">
-          <button className="fb-icon-btn w-8 h-8 text-sm">⋯</button>
-          <button className="fb-icon-btn w-8 h-8 text-sm">✕</button>
+          <button onClick={onDeadLink} className="fb-icon-btn w-8 h-8 text-sm">⋯</button>
+          <button onClick={onDeadLink} className="fb-icon-btn w-8 h-8 text-sm">✕</button>
         </div>
       </div>
 
-      {/* Post content — BUG 1: dangerouslySetInnerHTML renders raw HTML (XSS/injection) */}
+      {/* Post content — BUG 1: content stored with raw <h1>...</h2> tags, rendered as plain text so tags are visible */}
       <div className="px-4 pb-3">
-        <p
-          className="text-[15px] text-fb-text leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        <p className="text-[15px] text-fb-text leading-relaxed whitespace-pre-wrap">
+          {post.content}
+        </p>
       </div>
 
       {/* Post image */}
@@ -87,14 +88,13 @@ export default function Post({ post, onToggleLike, onAddComment }) {
 
       {/* Action buttons */}
       <div className="flex items-center px-2 py-1 gap-1">
+        {/* BUG 4: every click increments — no toggle, unlimited */}
         <button
-          onClick={() => onToggleLike(post.id)}
-          className={`flex-1 flex items-center justify-center gap-2 py-1.5 rounded-lg font-semibold text-[15px] transition-colors hover:bg-fb-hover ${
-            post.liked ? 'text-fb-blue' : 'text-fb-secondary'
-          }`}
+          onClick={() => onAddLike(post.id)}
+          className="flex-1 flex items-center justify-center gap-2 py-1.5 rounded-lg font-semibold text-[15px] transition-colors hover:bg-fb-hover text-fb-secondary"
         >
-          <span>{post.liked ? '👍' : '👍'}</span>
-          <span>{post.liked ? 'Liked' : 'Like'}</span>
+          <span>👍</span>
+          <span>Like</span>
         </button>
         <button
           onClick={() => setShowComments(!showComments)}
@@ -102,7 +102,10 @@ export default function Post({ post, onToggleLike, onAddComment }) {
         >
           <span>💬</span> Comment
         </button>
-        <button className="flex-1 flex items-center justify-center gap-2 py-1.5 rounded-lg font-semibold text-[15px] text-fb-secondary hover:bg-fb-hover transition-colors">
+        <button
+          onClick={onDeadLink}
+          className="flex-1 flex items-center justify-center gap-2 py-1.5 rounded-lg font-semibold text-[15px] text-fb-secondary hover:bg-fb-hover transition-colors"
+        >
           <span>↗️</span> Share
         </button>
       </div>

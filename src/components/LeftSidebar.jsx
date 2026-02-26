@@ -15,13 +15,14 @@ const SHORTCUTS = [
   { icon: '🧪', label: 'QA & Testing Enthusiasts', members: '5.1K members' },
 ]
 
-export default function LeftSidebar() {
+export default function LeftSidebar({ onDeadLink }) {
   return (
     <aside className="sticky top-[68px] h-[calc(100vh-68px)] overflow-y-auto py-2 scrollbar-hide">
       <div className="space-y-1">
         {NAV_ITEMS.map((item) => (
           <button
             key={item.label}
+            onClick={onDeadLink}
             className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-fb-hover transition-colors text-left"
           >
             <span className="text-2xl w-9 h-9 flex items-center justify-center">{item.icon}</span>
@@ -35,12 +36,13 @@ export default function LeftSidebar() {
       <div className="px-2">
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-bold text-fb-secondary text-[17px]">Your shortcuts</h3>
-          <button className="text-fb-blue text-sm font-semibold hover:bg-fb-hover px-2 py-1 rounded">Edit</button>
+          <button onClick={onDeadLink} className="text-fb-blue text-sm font-semibold hover:bg-fb-hover px-2 py-1 rounded">Edit</button>
         </div>
         <div className="space-y-1">
           {SHORTCUTS.map((s) => (
             <button
               key={s.label}
+              onClick={onDeadLink}
               className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-fb-hover transition-colors text-left"
             >
               <div className="w-9 h-9 rounded-lg bg-fb-hover flex items-center justify-center text-xl">{s.icon}</div>

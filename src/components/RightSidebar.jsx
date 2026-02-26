@@ -28,7 +28,7 @@ const SPONSORED = [
   },
 ]
 
-export default function RightSidebar() {
+export default function RightSidebar({ onDeadLink }) {
   const [added, setAdded] = useState([])
 
   const toggleAdd = (id) => {
@@ -47,7 +47,7 @@ export default function RightSidebar() {
         </div>
         <div className="space-y-3">
           {SPONSORED.map((s) => (
-            <a key={s.id} href={s.link} className="flex gap-3 hover:bg-fb-hover rounded-lg p-1 transition-colors">
+            <a key={s.id} href={s.link} onClick={(e) => { e.preventDefault(); onDeadLink() }} className="flex gap-3 hover:bg-fb-hover rounded-lg p-1 transition-colors">
               <img src={s.image} alt={s.brand} className="w-[120px] h-[80px] rounded-lg object-cover flex-shrink-0" />
               <div>
                 <p className="font-semibold text-sm text-fb-text">{s.brand}</p>
@@ -65,7 +65,7 @@ export default function RightSidebar() {
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2 px-1">
           <h3 className="font-bold text-fb-secondary text-[17px]">People you may know</h3>
-          <button className="text-fb-blue text-sm font-semibold hover:bg-fb-hover px-2 py-1 rounded">See all</button>
+          <button onClick={onDeadLink} className="text-fb-blue text-sm font-semibold hover:bg-fb-hover px-2 py-1 rounded">See all</button>
         </div>
         <div className="space-y-2">
           {FRIEND_SUGGESTIONS.map((f) => (
@@ -97,14 +97,14 @@ export default function RightSidebar() {
         <div className="flex items-center justify-between mb-2 px-1">
           <h3 className="font-bold text-fb-secondary text-[17px]">Contacts</h3>
           <div className="flex gap-1">
-            <button className="fb-icon-btn w-7 h-7 text-sm">🔍</button>
-            <button className="fb-icon-btn w-7 h-7 text-sm">⋯</button>
+            <button onClick={onDeadLink} className="fb-icon-btn w-7 h-7 text-sm">🔍</button>
+            <button onClick={onDeadLink} className="fb-icon-btn w-7 h-7 text-sm">⋯</button>
           </div>
         </div>
         <p className="text-xs text-fb-secondary px-1 mb-2">3 friends active now</p>
         <div className="space-y-1">
           {ACTIVE_FRIENDS.map((f) => (
-            <div key={f.id} className="flex items-center gap-3 px-1 py-1.5 hover:bg-fb-hover rounded-lg cursor-pointer transition-colors">
+            <div key={f.id} onClick={onDeadLink} className="flex items-center gap-3 px-1 py-1.5 hover:bg-fb-hover rounded-lg cursor-pointer transition-colors">
               <div className="relative">
                 <img src={f.avatar} alt={f.name} className="w-9 h-9 rounded-full object-cover" />
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />

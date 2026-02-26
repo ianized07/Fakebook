@@ -14,7 +14,7 @@ const NOTIFICATIONS = [
   { id: 3, text: 'Dev Community PH sent you a friend request.', time: '3 hrs ago', read: true },
 ]
 
-export default function Navbar() {
+export default function Navbar({ onDeadLink }) {
   const [search, setSearch]       = useState('')
   const [showNotif, setShowNotif] = useState(false)
   const [showMenu, setShowMenu]   = useState(false)
@@ -51,6 +51,7 @@ export default function Navbar() {
         {NAV_ICONS.map((n) => (
           <button
             key={n.label}
+            onClick={!n.active ? onDeadLink : undefined}
             className={`flex flex-col items-center justify-center w-24 h-[52px] rounded-lg text-xl transition-colors border-b-2 ${
               n.active
                 ? 'border-fb-blue text-fb-blue'
@@ -71,7 +72,7 @@ export default function Navbar() {
           <span>You</span>
         </button>
 
-        <button className="fb-icon-btn relative" title="Messenger">
+        <button onClick={onDeadLink} className="fb-icon-btn relative" title="Messenger">
           <span className="text-xl">💬</span>
           <span className="notif-badge">5</span>
         </button>
@@ -91,7 +92,7 @@ export default function Navbar() {
             <div className="absolute right-0 top-12 w-80 bg-white rounded-xl shadow-2xl border border-fb-border z-50 overflow-hidden">
               <div className="p-4 flex items-center justify-between border-b border-fb-border">
                 <h3 className="font-bold text-lg">Notifications</h3>
-                <button className="text-fb-blue text-sm font-semibold hover:bg-fb-hover px-2 py-1 rounded">
+                <button onClick={onDeadLink} className="text-fb-blue text-sm font-semibold hover:bg-fb-hover px-2 py-1 rounded">
                   Mark all as read
                 </button>
               </div>

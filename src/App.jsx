@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import Navbar from './components/Navbar'
 import LeftSidebar from './components/LeftSidebar'
 import RightSidebar from './components/RightSidebar'
 import NewsFeed from './components/NewsFeed'
+import ErrorToast from './components/ErrorToast'
 
 const INITIAL_POSTS = [
   {
@@ -15,7 +16,6 @@ const INITIAL_POSTS = [
     likes: 42,
     comments: 24,
     shares: 5,
-    liked: false,
   },
   {
     id: 2,
@@ -27,7 +27,6 @@ const INITIAL_POSTS = [
     likes: 0,
     comments: 8,
     shares: 2,
-    liked: false,
   },
   {
     id: 3,
@@ -39,7 +38,6 @@ const INITIAL_POSTS = [
     likes: 156,
     comments: 43,
     shares: 22,
-    liked: false,
   },
   {
     id: 4,
@@ -51,37 +49,42 @@ const INITIAL_POSTS = [
     likes: 201,
     comments: 57,
     shares: 41,
-    liked: false,
   },
 ]
 
 export default function App() {
-  const [posts, setPosts] = useState(INITIAL_POSTS)
+  const [posts, setPosts]         = useState(INITIAL_POSTS)
+  const [toastVisible, setToast]  = useState(false)
+  const toastTimer                = useRef(null)
 
+  const showDeadLinkError = useCallback(() => {
+    if (toastTimer.current) clearTimeout(toastTimer.current)
+    setToast(true)
+    toastTimer.current = setTimeout(() => setToast(false), 2500)
+  }, [])
+
+  // BUG 1: content is wrapped with mismatched HTML tags before storing
   const addPost = (content) => {
+    const wrapped = `<h1>${content}</h2>`
     const newPost = {
       id: Date.now(),
       user: 'You',
       avatar: 'https://i.pravatar.cc/40?img=68',
       timestamp: 'Just now',
-      content,
+      content: wrapped,
       image: null,
       likes: 0,
       comments: 0,
       shares: 0,
-      liked: false,
     }
     setPosts([newPost, ...posts])
   }
 
-  const toggleLike = (id) => {
-    setPosts(posts.map((p) => {
-      if (p.id !== id) return p
-      if (p.liked) {
-        return { ...p, liked: false, likes: p.likes - 1 }
-      }
-      return { ...p, liked: true, likes: p.likes + 1 }
-    }))
+  // BUG 4: every click unconditionally increments — no toggle, no cap
+  const addLike = (id) => {
+    setPosts(posts.map((p) =>
+      p.id === id ? { ...p, likes: p.likes + 1 } : p
+    ))
   }
 
   const addComment = (id) => {
@@ -92,11 +95,18 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-fb-bg">
-      <Navbar />
+      <ErrorToast visible={toastVisible} />
+      <Navbar onDeadLink={showDeadLinkError} />
       <div className="max-w-[1250px] mx-auto pt-[60px] grid grid-cols-[280px_1fr_280px] gap-4 px-4">
-        <LeftSidebar />
-        <NewsFeed posts={posts} onAddPost={addPost} onToggleLike={toggleLike} onAddComment={addComment} />
-        <RightSidebar />
+        <LeftSidebar onDeadLink={showDeadLinkError} />
+        <NewsFeed
+          posts={posts}
+          onAddPost={addPost}
+          onAddLike={addLike}
+          onAddComment={addComment}
+          onDeadLink={showDeadLinkError}
+        />
+        <RightSidebar onDeadLink={showDeadLinkError} />
       </div>
     </div>
   )
