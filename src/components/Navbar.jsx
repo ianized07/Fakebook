@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+const RANDOM_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
+
 const NAV_ICONS = [
   { label: 'Home',     icon: '🏠', active: true  },
   { label: 'Freinds',  icon: '👥', active: false },
@@ -23,6 +25,16 @@ export default function Navbar({ onDeadLink }) {
     setSearch('')
   }
 
+  // BUG: search input appends a random character instead of the typed one
+  const handleSearchChange = (e) => {
+    if (e.target.value.length < search.length) {
+      setSearch(e.target.value)
+      return
+    }
+    const rnd = RANDOM_CHARS[Math.floor(Math.random() * RANDOM_CHARS.length)]
+    setSearch((prev) => prev + rnd)
+  }
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md h-[60px] flex items-center px-4 justify-between">
 
@@ -36,7 +48,7 @@ export default function Navbar({ onDeadLink }) {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={handleSearchChange}
             placeholder="Search Fakebook"
             className="bg-transparent outline-none text-sm w-full text-fb-text placeholder-fb-secondary"
           />
