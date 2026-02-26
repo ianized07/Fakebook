@@ -88,6 +88,13 @@ export default function App() {
     ))
   }
 
+  // BUG: Share subtracts likes with no floor — can go negative indefinitely
+  const subtractLike = (id) => {
+    setPosts(posts.map((p) =>
+      p.id === id ? { ...p, likes: p.likes - 1 } : p
+    ))
+  }
+
   const addComment = (id) => {
     setPosts(posts.map((p) =>
       p.id === id ? { ...p, comments: p.comments } : p
@@ -104,6 +111,7 @@ export default function App() {
           posts={posts}
           onAddPost={addPost}
           onAddLike={addLike}
+          onSubtractLike={subtractLike}
           onAddComment={addComment}
           onDeadLink={showDeadLinkError}
         />

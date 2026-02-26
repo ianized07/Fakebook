@@ -2,7 +2,7 @@ import Stories from './Stories'
 import CreatePost from './CreatePost'
 import Post from './Post'
 
-export default function NewsFeed({ posts, onAddPost, onAddLike, onAddComment, onDeadLink }) {
+export default function NewsFeed({ posts, onAddPost, onAddLike, onSubtractLike, onAddComment, onDeadLink }) {
   return (
     <main className="py-4 space-y-4 min-w-0">
       <Stories onDeadLink={onDeadLink} />
@@ -12,6 +12,7 @@ export default function NewsFeed({ posts, onAddPost, onAddLike, onAddComment, on
           key={post.id}
           post={post}
           onAddLike={onAddLike}
+          onSubtractLike={onSubtractLike}
           onAddComment={onAddComment}
           onDeadLink={onDeadLink}
         />

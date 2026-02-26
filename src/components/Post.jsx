@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function Post({ post, onAddLike, onAddComment, onDeadLink }) {
+export default function Post({ post, onAddLike, onSubtractLike, onAddComment, onDeadLink }) {
   const [showComments, setShowComments] = useState(false)
   const [commentInput, setCommentInput]   = useState('')
   const [localComments, setLocalComments] = useState([])
@@ -102,8 +102,9 @@ export default function Post({ post, onAddLike, onAddComment, onDeadLink }) {
         >
           <span>💬</span> Comment
         </button>
+        {/* BUG: Share subtracts likes — opposite of Like, can go negative */}
         <button
-          onClick={onDeadLink}
+          onClick={() => onSubtractLike(post.id)}
           className="flex-1 flex items-center justify-center gap-2 py-1.5 rounded-lg font-semibold text-[15px] text-fb-secondary hover:bg-fb-hover transition-colors"
         >
           <span>↗️</span> Share
