@@ -15,7 +15,13 @@ const SHORTCUTS = [
   { icon: '🧪', label: 'QA & Testing Enthusiasts', members: '5.1K members' },
 ]
 
-export default function LeftSidebar({ onDeadLink }) {
+const ITEM_ACTIONS = { Events: 'timestamps' }
+
+export default function LeftSidebar({ onDeadLink, onCorruptTimestamps }) {
+  const handleItem = (label) => {
+    if (ITEM_ACTIONS[label] === 'timestamps') onCorruptTimestamps()
+    else onDeadLink()
+  }
   return (
     <aside className="sticky top-[68px] h-[calc(100vh-68px)] overflow-y-auto py-2 scrollbar-hide">
       <div className="space-y-1">
@@ -34,7 +40,7 @@ export default function LeftSidebar({ onDeadLink }) {
           ) : (
             <button
               key={item.label}
-              onClick={onDeadLink}
+              onClick={() => handleItem(item.label)}
               className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-fb-hover transition-colors text-left"
             >
               <span className="text-2xl w-9 h-9 flex items-center justify-center">{item.icon}</span>

@@ -53,8 +53,11 @@ const INITIAL_POSTS = [
 ]
 
 export default function App() {
-  const [posts, setPosts]   = useState(INITIAL_POSTS)
-  const [toasts, setToasts] = useState([])
+  const [posts, setPosts]             = useState(INITIAL_POSTS)
+  const [toasts, setToasts]           = useState([])
+  const [watchMode, setWatchMode]     = useState(false)
+  const [marketMode, setMarketMode]   = useState(false)
+  const [feelingMode, setFeelingMode] = useState(false)
 
   const showDeadLinkError = useCallback(() => {
     const id = Date.now() + Math.random()
@@ -78,42 +81,66 @@ export default function App() {
       comments: 0,
       shares: 0,
     }
-    setPosts([newPost, ...posts])
+    setPosts((prev) => [newPost, ...prev])
   }
 
   // BUG 4: every click unconditionally increments — no toggle, no cap
   const addLike = (id) => {
-    setPosts(posts.map((p) =>
-      p.id === id ? { ...p, likes: p.likes + 1 } : p
-    ))
+    setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes: p.likes + 1 } : p))
   }
 
   // BUG: Share subtracts likes with no floor — can go negative indefinitely
   const subtractLike = (id) => {
-    setPosts(posts.map((p) =>
-      p.id === id ? { ...p, likes: p.likes - 1 } : p
-    ))
+    setPosts((prev) => prev.map((p) => p.id === id ? { ...p, likes: p.likes - 1 } : p))
   }
 
   const addComment = (id) => {
-    setPosts(posts.map((p) =>
-      p.id === id ? { ...p, comments: p.comments } : p
-    ))
+    setPosts((prev) => prev.map((p) => p.id === id ? { ...p, comments: p.comments } : p))
   }
+
+  // BUG Freinds: duplicates all posts in the feed
+  const duplicatePosts = useCallback(() => {
+    setPosts((prev) => [...prev, ...prev.map((p) => ({ ...p, id: p.id + Date.now() }))])
+  }, [])
+
+  // BUG ✕: close duplicates the post instead of removing it
+  const duplicatePost = useCallback((id) => {
+    setPosts((prev) => {
+      const idx = prev.findIndex((p) => p.id === id)
+      if (idx === -1) return prev
+      const copy = { ...prev[idx], id: Date.now() + Math.random() }
+      return [...prev.slice(0, idx + 1), copy, ...prev.slice(idx + 1)]
+    })
+  }, [])
+
+  // BUG Events: stamps all posts with the invalid date
+  const corruptTimestamps = useCallback(() => {
+    setPosts((prev) => prev.map((p) => ({ ...p, timestamp: 'February 31, 2025 at 12:00 AM' })))
+  }, [])
 
   return (
     <div className="min-h-screen bg-fb-bg">
       <ErrorToast toasts={toasts} />
-      <Navbar onDeadLink={showDeadLinkError} />
+      <Navbar
+        onDeadLink={showDeadLinkError}
+        onDuplicatePosts={duplicatePosts}
+        onWatchMode={() => setWatchMode(true)}
+        onMarketMode={() => setMarketMode(true)}
+      />
       <div className="max-w-[1250px] mx-auto pt-[60px] grid grid-cols-[280px_1fr_280px] gap-4 px-4">
-        <LeftSidebar onDeadLink={showDeadLinkError} />
+        <LeftSidebar onDeadLink={showDeadLinkError} onCorruptTimestamps={corruptTimestamps} />
         <NewsFeed
           posts={posts}
           onAddPost={addPost}
           onAddLike={addLike}
           onSubtractLike={subtractLike}
           onAddComment={addComment}
+          onDuplicatePost={duplicatePost}
           onDeadLink={showDeadLinkError}
+          onFeelingMode={() => setFeelingMode(true)}
+          watchMode={watchMode}
+          marketMode={marketMode}
+          feelingMode={feelingMode}
         />
         <RightSidebar onDeadLink={showDeadLinkError} />
       </div>

@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 const CHAR_LIMIT = 280
 
-export default function CreatePost({ onAddPost, onDeadLink }) {
+export default function CreatePost({ onAddPost, onDeadLink, onFeelingMode }) {
   const [content, setContent] = useState('')
   const [showFull, setShowFull] = useState(false)
 
@@ -74,13 +74,25 @@ export default function CreatePost({ onAddPost, onDeadLink }) {
           {/* Post attachment options */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex gap-1">
-              <button onClick={onDeadLink} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-fb-hover text-sm font-semibold text-fb-secondary transition-colors">
+              {/* BUG Photo/Video: injects broken image reference into post text */}
+              <button
+                onClick={() => setContent((prev) => prev + `\n<img src="https://fakebook-cdn.broken/photo_${Date.now()}.jpg">`)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-fb-hover text-sm font-semibold text-fb-secondary transition-colors"
+              >
                 📷 Photo/Video
               </button>
-              <button onClick={onDeadLink} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-fb-hover text-sm font-semibold text-fb-secondary transition-colors">
+              {/* BUG Feeling: replaces all emoji in the entire feed with 💀 */}
+              <button
+                onClick={onFeelingMode}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-fb-hover text-sm font-semibold text-fb-secondary transition-colors"
+              >
                 😊 Feeling
               </button>
-              <button onClick={onDeadLink} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-fb-hover text-sm font-semibold text-fb-secondary transition-colors">
+              {/* BUG Location: appends GPS error text to post box */}
+              <button
+                onClick={() => setContent((prev) => prev + '\n📍 Error: GPS unavailable')}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-fb-hover text-sm font-semibold text-fb-secondary transition-colors"
+              >
                 📍 Location
               </button>
             </div>

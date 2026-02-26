@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
-export default function Post({ post, onAddLike, onSubtractLike, onAddComment, onDeadLink }) {
+const EMOJI_RE = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu
+
+export default function Post({ post, onAddLike, onSubtractLike, onAddComment, onDuplicatePost, onDeadLink, watchMode, marketMode, feelingMode }) {
   const [showComments, setShowComments] = useState(false)
   const [commentInput, setCommentInput]   = useState('')
   const [localComments, setLocalComments] = useState([])
@@ -40,25 +42,28 @@ export default function Post({ post, onAddLike, onSubtractLike, onAddComment, on
         </div>
         <div className="flex items-center gap-1">
           <button onClick={onDeadLink} className="fb-icon-btn w-8 h-8 text-sm">⋯</button>
-          <button onClick={onDeadLink} className="fb-icon-btn w-8 h-8 text-sm">✕</button>
+          {/* BUG ✕: close duplicates the post instead of removing it */}
+          <button onClick={() => onDuplicatePost(post.id)} className="fb-icon-btn w-8 h-8 text-sm">✕</button>
         </div>
       </div>
 
-      {/* Post content — BUG 1: content stored with raw <h1>...</h2> tags, rendered as plain text so tags are visible */}
+      {/* Post content — BUG 1: raw tags visible; feelingMode replaces all emoji with 💀 */}
       <div className="px-4 pb-3">
         <p className="text-[15px] text-fb-text leading-relaxed whitespace-pre-wrap">
-          {post.content}
+          {feelingMode ? post.content.replace(EMOJI_RE, '💀') : post.content}
         </p>
       </div>
 
-      {/* Post image */}
-      {post.image && (
-        <img
-          src={post.image}
-          alt="post"
-          className="post-image"
-        />
-      )}
+      {/* Post image — watchMode replaces with broken video thumbnail */}
+      {watchMode ? (
+        <div className="w-full h-48 bg-gray-900 flex flex-col items-center justify-center gap-2 text-gray-500">
+          <span className="text-4xl">📹</span>
+          <span className="text-xs font-mono">Error: video codec not supported</span>
+          <span className="text-[10px] text-gray-600">fakebook-video://stream/0x{post.id.toString(16)}</span>
+        </div>
+      ) : post.image ? (
+        <img src={post.image} alt="post" className="post-image" />
+      ) : null}
 
       {/* Reaction counts */}
       <div className="px-4 py-1.5 flex items-center justify-between text-fb-secondary text-sm border-b border-fb-border">
@@ -66,13 +71,18 @@ export default function Post({ post, onAddLike, onSubtractLike, onAddComment, on
           {post.likes !== 0 && (
             <>
               <span className="flex items-center justify-center w-5 h-5 rounded-full bg-fb-blue text-white text-xs">👍</span>
-              {/* BUG: likes can go negative via Share — no floor */}
-              <span className={`${post.likes < 0 ? 'text-red-500 font-bold' : ''}`}>
-                {post.likes < 0 ? `${post.likes} (negative?!)` : post.likes}
-              </span>
+              {/* BUG: likes can go negative via Share; marketMode shows price */}
+              {marketMode ? (
+                <span className="text-green-600 font-bold">₱{Math.abs(post.likes).toFixed(2)}</span>
+              ) : (
+                <span className={`${post.likes < 0 ? 'text-red-500 font-bold' : ''}`}>
+                  {post.likes < 0 ? `${post.likes} (negative?!)` : post.likes}
+                </span>
+              )}
             </>
           )}
-          {post.likes === 0 && <span className="text-fb-secondary text-xs">Be the first to react</span>}
+          {post.likes === 0 && !marketMode && <span className="text-fb-secondary text-xs">Be the first to react</span>}
+          {post.likes === 0 && marketMode && <span className="text-green-600 font-bold">₱0.00</span>}
         </div>
         <div className="flex items-center gap-3">
           {/* BUG 9: comment count hardcoded — localComments.length not added to post.comments */}
