@@ -1,6 +1,6 @@
 # Fakebook — Bug Documentation
 
-**Total bugs: 15**
+**Total bugs: 24**
 
 All bugs are intentional and designed for QA exam/testing purposes.
 
@@ -55,11 +55,48 @@ All bugs are intentional and designed for QA exam/testing purposes.
 
 ---
 
-## Dead Links
+## Dead Links / Stacking Toast
 
 | # | Bug | How to Reproduce | Expected | Actual |
 |---|-----|-----------------|----------|--------|
-| 15 | **Dead links show stacking 404 toasts** | Click any nav tab (Freinds, Watch, Marketplace, Groups), any left sidebar item, Messenger, Share, ⋯, ✕, sponsored ads, Contacts | Page navigates or action completes | Red `404 — Page not found` toast appears bottom-right; multiple clicks stack multiple toasts, each auto-dismissing after 2.5s |
+| 15 | **Dead links show stacking 404 toasts** | Click Groups, any left sidebar item (except Gaming/Events), ⋯ button, sponsored ads, or Contacts | Page navigates or action completes | Red `404 — Page not found` toast appears bottom-right; multiple clicks stack multiple toasts, each auto-dismissing after 2.5s |
+
+---
+
+## Nav Tab Bugs (Triggered by Clicking Dead Tabs)
+
+| # | Bug | How to Reproduce | Expected | Actual |
+|---|-----|-----------------|----------|--------|
+| 16 | **Freinds tab duplicates entire feed** | Click the **👥 Freinds** tab in the navbar | Navigate to Friends page | Every post in the feed is duplicated; clicking again doubles them again |
+| 17 | **Watch tab breaks all post images** | Click the **📺 Watch** tab in the navbar | Navigate to Watch page | Every post image/thumbnail is replaced with a dark broken video placeholder showing `Error: video codec not supported` |
+| 18 | **Marketplace tab converts likes to prices** | Click the **🛍️ Marketplace** tab in the navbar | Navigate to Marketplace page | All like counts are converted to ₱ prices — e.g. `42` becomes `₱42.00` |
+| 19 | **Messenger opens fake chat with error replies** | Click the **💬 Messenger** icon in the navbar | Open real Messenger | A fake chat panel opens; every message sent auto-replies `Error: connection lost` after a short delay |
+
+---
+
+## Left Sidebar Bugs
+
+| # | Bug | How to Reproduce | Expected | Actual |
+|---|-----|-----------------|----------|--------|
+| 20 | **Events corrupts all post timestamps** | Click **📅 Events** in the left sidebar | Navigate to Events page | Every post timestamp is overwritten with `February 31, 2025 at 12:00 AM` |
+
+---
+
+## Post Button Bugs
+
+| # | Bug | How to Reproduce | Expected | Actual |
+|---|-----|-----------------|----------|--------|
+| 21 | **✕ close button duplicates the post** | Click the **✕** button on any post | Post is removed from the feed | Post is cloned and a duplicate appears directly below the original |
+
+---
+
+## Compose / Attachment Button Bugs
+
+| # | Bug | How to Reproduce | Expected | Actual |
+|---|-----|-----------------|----------|--------|
+| 22 | **Photo/Video injects broken image tag into post** | Open the post box, click **📷 Photo/Video** | Photo picker opens | A raw broken `<img src="https://fakebook-cdn.broken/photo_[timestamp].jpg">` tag is appended as literal text into the compose box |
+| 23 | **Feeling replaces all feed emoji with 💀** | Open the post box, click **😊 Feeling** | Feeling/Activity picker opens | Every emoji across the entire feed is replaced with 💀 immediately |
+| 24 | **Location appends GPS error to post box** | Open the post box, click **📍 Location** | Location picker opens | `📍 Error: GPS unavailable` is appended as text into the compose box |
 
 ---
 
