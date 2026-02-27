@@ -16,7 +16,7 @@ const NOTIFICATIONS = [
   { id: 3, text: 'Dev Community PH sent you a friend request.', time: '3 hrs ago', read: true },
 ]
 
-export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMarketMode }) {
+export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMarketMode, onLogoutFake, onLogoClick }) {
   const [search, setSearch]           = useState('')
   const [showNotif, setShowNotif]     = useState(false)
   const [showMenu, setShowMenu]       = useState(false)
@@ -25,6 +25,8 @@ export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMa
   const [chatMessages, setChatMessages] = useState([
     { id: 1, from: 'system', text: 'Messenger — 5 active conversations' },
   ])
+  const [profileModals, setProfileModals] = useState(0)
+  const [crashed, setCrashed]         = useState(false)
 
   const NAV_HANDLERS = {
     Freinds:     onDuplicatePosts,
@@ -60,14 +62,32 @@ export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMa
     setSearch((prev) => prev + rnd)
   }
 
+  // BUG Profile: clicking any button in modal duplicates it
+  const handleProfileClick = () => {
+    setProfileModals(1)
+  }
+
+  const handleProfileModalAction = () => {
+    setProfileModals((prev) => prev + 1)
+  }
+
+  // BUG Settings & Help: crashes the page
+  const handleCrash = () => {
+    setCrashed(true)
+  }
+
+  if (crashed) {
+    throw new Error('Application has crashed')
+  }
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md h-[60px] flex items-center px-4 justify-between">
 
       {/* Left — logo + search */}
       <div className="flex items-center gap-2 min-w-[280px]">
-        <div className="w-10 h-10 rounded-full bg-fb-blue flex items-center justify-center">
+        <button onClick={onLogoClick} className="w-10 h-10 rounded-full bg-fb-blue flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
           <span className="text-white font-black text-xl">f</span>
-        </div>
+        </button>
         <div className="flex items-center bg-fb-bg rounded-full px-3 py-1.5 gap-2 w-52">
           <span className="text-fb-secondary text-sm">🔍</span>
           <input
@@ -193,7 +213,7 @@ export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMa
 
           {showMenu && (
             <div className="absolute right-0 top-12 w-72 bg-white rounded-xl shadow-2xl border border-fb-border z-50 p-2">
-              <div className="flex items-center gap-3 p-2 hover:bg-fb-hover rounded-lg cursor-pointer">
+              <div onClick={handleProfileClick} className="flex items-center gap-3 p-2 hover:bg-fb-hover rounded-lg cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">👤</div>
                 <div>
                   <p className="font-semibold text-sm">Your Profile</p>
@@ -201,16 +221,16 @@ export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMa
                 </div>
               </div>
               <hr className="my-2 border-fb-border" />
-              <div className="flex items-center gap-3 p-2 hover:bg-fb-hover rounded-lg cursor-pointer">
+              <div onClick={handleCrash} className="flex items-center gap-3 p-2 hover:bg-fb-hover rounded-lg cursor-pointer">
                 <span className="text-lg">⚙️</span>
                 <span className="text-sm font-medium">Settings & Privacy</span>
               </div>
-              <div className="flex items-center gap-3 p-2 hover:bg-fb-hover rounded-lg cursor-pointer">
+              <div onClick={handleCrash} className="flex items-center gap-3 p-2 hover:bg-fb-hover rounded-lg cursor-pointer">
                 <span className="text-lg">❓</span>
                 <span className="text-sm font-medium">Help & Support</span>
               </div>
               <hr className="my-2 border-fb-border" />
-              <div className="flex items-center gap-3 p-2 hover:bg-red-50 rounded-lg cursor-pointer text-red-600">
+              <div onClick={onLogoutFake} className="flex items-center gap-3 p-2 hover:bg-red-50 rounded-lg cursor-pointer text-red-600">
                 <span className="text-lg">🚪</span>
                 <span className="text-sm font-medium">Log Out</span>
               </div>
@@ -218,6 +238,21 @@ export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMa
           )}
         </div>
       </div>
+
+      {/* BUG Profile: multiplying confirmation modals */}
+      {Array.from({ length: profileModals }).map((_, i) => (
+        <div key={i} className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]" style={{ zIndex: 100 + i }}>
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-96 relative" style={{ marginTop: `${i * 20}px`, marginLeft: `${i * 20}px` }}>
+            <button onClick={handleProfileModalAction} className="absolute top-3 right-3 text-fb-secondary hover:text-fb-text text-xl">✕</button>
+            <h3 className="font-bold text-xl mb-2">Go to your profile?</h3>
+            <p className="text-sm text-fb-secondary mb-6">Do you want to visit your profile page?</p>
+            <div className="flex gap-3 justify-end">
+              <button onClick={handleProfileModalAction} className="px-4 py-2 bg-fb-hover hover:bg-fb-border rounded-lg font-medium text-sm transition-colors">No</button>
+              <button onClick={handleProfileModalAction} className="px-4 py-2 bg-fb-blue text-white hover:bg-blue-600 rounded-lg font-medium text-sm transition-colors">Yes</button>
+            </div>
+          </div>
+        </div>
+      ))}
     </nav>
   )
 }

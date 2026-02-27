@@ -118,6 +118,20 @@ export default function App() {
     setPosts((prev) => prev.map((p) => ({ ...p, timestamp: 'February 31, 2025 at 12:00 AM' })))
   }, [])
 
+  // BUG Logout: shows success message but doesn't log out
+  const fakeLogout = useCallback(() => {
+    const id = Date.now() + Math.random()
+    setToasts((prev) => [...prev, { id, message: 'Successfully logged out!' }])
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id))
+    }, 2500)
+  }, [])
+
+  // BUG Logo: shows 404 Home not found
+  const handleLogoClick = useCallback(() => {
+    showDeadLinkError()
+  }, [showDeadLinkError])
+
   return (
     <div className="min-h-screen bg-fb-bg">
       <ErrorToast toasts={toasts} />
@@ -126,6 +140,8 @@ export default function App() {
         onDuplicatePosts={duplicatePosts}
         onWatchMode={() => setWatchMode(true)}
         onMarketMode={() => setMarketMode(true)}
+        onLogoutFake={fakeLogout}
+        onLogoClick={handleLogoClick}
       />
       <div className="max-w-[1250px] mx-auto pt-[60px] grid grid-cols-[280px_1fr_280px] gap-4 px-4">
         <LeftSidebar 

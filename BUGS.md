@@ -1,6 +1,6 @@
 # Fakebook — Bug Documentation
 
-**Total bugs: 25**
+**Total bugs: 30**
 
 All bugs are intentional and designed for QA exam/testing purposes.
 
@@ -98,6 +98,18 @@ All bugs are intentional and designed for QA exam/testing purposes.
 | 22 | **Photo/Video injects broken image tag into post** | Open the post box, click **📷 Photo/Video** | Photo picker opens | A raw broken `<img src="https://fakebook-cdn.broken/photo_[timestamp].jpg">` tag is appended as literal text into the compose box |
 | 23 | **Feeling replaces all feed emoji with 💀** | Open the post box, click **😊 Feeling** | Feeling/Activity picker opens | Every emoji across the entire feed is replaced with 💀 immediately |
 | 24 | **Location appends GPS error to post box** | Open the post box, click **📍 Location** | Location picker opens | `📍 Error: GPS unavailable` is appended as text into the compose box |
+
+---
+
+## User Menu & Logo Bugs
+
+| # | Bug | How to Reproduce | Expected | Actual |
+|---|-----|-----------------|----------|--------|
+| 26 | **Your Profile multiplying confirmation modals** | Click **⋯** menu → **Your Profile** | Profile page loads | Modal appears asking "Go to your profile?"; clicking **Yes**, **No**, or **✕** duplicates the modal instead of closing it; each click adds another stacked modal |
+| 27 | **Settings & Privacy crashes the page** | Click **⋯** menu → **⚙️ Settings & Privacy** | Settings panel opens | Page crashes immediately with uncaught error (white screen) |
+| 28 | **Help & Support crashes the page** | Click **⋯** menu → **❓ Help & Support** | Help center opens | Page crashes immediately with uncaught error (white screen) |
+| 29 | **Log Out shows fake success but stays logged in** | Click **⋯** menu → **🚪 Log Out** | User is logged out | Green toast appears: "Successfully logged out!" but user remains logged in with no actual state change |
+| 30 | **Fakebook logo shows 404 error** | Click the **f** logo in the top-left navbar | Scrolls to top of feed / refreshes home | Shows red `404 — Page not found` error toast as if it's a broken link |
 
 ---
 
