@@ -15,11 +15,17 @@ const SHORTCUTS = [
   { icon: '🧪', label: 'QA & Testing Enthusiasts', members: '5.1K members' },
 ]
 
-const ITEM_ACTIONS = { Events: 'timestamps' }
+const ITEM_ACTIONS = { 
+  Events: 'timestamps',
+  Watch: 'watch',
+  Marketplace: 'market',
+}
 
-export default function LeftSidebar({ onDeadLink, onCorruptTimestamps }) {
+export default function LeftSidebar({ onDeadLink, onCorruptTimestamps, onWatchMode, onMarketMode }) {
   const handleItem = (label) => {
     if (ITEM_ACTIONS[label] === 'timestamps') onCorruptTimestamps()
+    else if (ITEM_ACTIONS[label] === 'watch') onWatchMode()
+    else if (ITEM_ACTIONS[label] === 'market') onMarketMode()
     else onDeadLink()
   }
   return (

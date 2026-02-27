@@ -128,7 +128,12 @@ export default function App() {
         onMarketMode={() => setMarketMode(true)}
       />
       <div className="max-w-[1250px] mx-auto pt-[60px] grid grid-cols-[280px_1fr_280px] gap-4 px-4">
-        <LeftSidebar onDeadLink={showDeadLinkError} onCorruptTimestamps={corruptTimestamps} />
+        <LeftSidebar 
+          onDeadLink={showDeadLinkError} 
+          onCorruptTimestamps={corruptTimestamps}
+          onWatchMode={() => setWatchMode(true)}
+          onMarketMode={() => setMarketMode(true)}
+        />
         <NewsFeed
           posts={posts}
           onAddPost={addPost}
