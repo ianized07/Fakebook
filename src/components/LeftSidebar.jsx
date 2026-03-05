@@ -83,7 +83,7 @@ export default function LeftSidebar({ onDeadLink, onCorruptTimestamps, onWatchMo
       <hr className="my-3 border-fb-border" />
 
       <p className="px-2 text-xs text-fb-secondary leading-relaxed">
-        Privacy · Terms · Advertising · Cookies · More · Fakebook © 2025
+        Privacy · Terms · Advertising · Cookies · More · Created by: Cliff Ian Murillo · Fakebook © 2026
       </p>
     </aside>
   )
