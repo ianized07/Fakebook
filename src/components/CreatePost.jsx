@@ -52,7 +52,7 @@ export default function CreatePost({ onAddPost, onDeadLink, onFeelingMode }) {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="What's on your mind? (HTML tags are supported!)"
+              placeholder="What's on your mind?"
               rows={4}
               style={{ resize: 'both' }}
               className="w-full outline-none text-fb-text text-[15px] placeholder-fb-secondary bg-transparent min-h-[80px]"

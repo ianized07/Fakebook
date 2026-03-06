@@ -81,14 +81,14 @@ export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMa
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md h-[60px] flex items-center px-4 justify-between">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md h-[60px] flex items-center px-2 sm:px-4 justify-between">
 
       {/* Left — logo + search */}
-      <div className="flex items-center gap-2 min-w-[280px]">
+      <div className="flex items-center gap-2">
         <button onClick={onLogoClick} className="w-10 h-10 rounded-full bg-fb-blue flex items-center justify-center cursor-pointer hover:opacity-90 transition-opacity">
           <span className="text-white font-black text-xl">f</span>
         </button>
-        <div className="flex items-center bg-fb-bg rounded-full px-3 py-1.5 gap-2 w-52">
+        <div className="hidden sm:flex items-center bg-fb-bg rounded-full px-3 py-1.5 gap-2 w-32 md:w-52">
           <span className="text-fb-secondary text-sm">🔍</span>
           <input
             type="text"
@@ -104,7 +104,7 @@ export default function Navbar({ onDeadLink, onDuplicatePosts, onWatchMode, onMa
       </div>
 
       {/* Center — nav tabs */}
-      <div className="flex items-center gap-1">
+      <div className="hidden md:flex items-center gap-1">
         {NAV_ICONS.map((n) => (
           <button
             key={n.label}

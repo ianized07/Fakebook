@@ -67,6 +67,14 @@ export default function App() {
     }, 2500)
   }, [])
 
+  const show404Error = useCallback(() => {
+    const id = Date.now() + Math.random()
+    setToasts((prev) => [...prev, { id, type: '404' }])
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id))
+    }, 2500)
+  }, [])
+
   // BUG 1: content is wrapped with mismatched HTML tags before storing
   const addPost = (content) => {
     const wrapped = `<h1>${content}</h2>`
@@ -129,8 +137,8 @@ export default function App() {
 
   // BUG Logo: shows 404 Home not found
   const handleLogoClick = useCallback(() => {
-    showDeadLinkError()
-  }, [showDeadLinkError])
+    show404Error()
+  }, [show404Error])
 
   return (
     <div className="min-h-screen bg-fb-bg">
@@ -143,13 +151,15 @@ export default function App() {
         onLogoutFake={fakeLogout}
         onLogoClick={handleLogoClick}
       />
-      <div className="max-w-[1250px] mx-auto pt-[60px] grid grid-cols-[280px_1fr_280px] gap-4 px-4">
-        <LeftSidebar 
-          onDeadLink={showDeadLinkError} 
-          onCorruptTimestamps={corruptTimestamps}
-          onWatchMode={() => setWatchMode(true)}
-          onMarketMode={() => setMarketMode(true)}
-        />
+      <div className="max-w-[1250px] mx-auto pt-[60px] grid grid-cols-1 lg:grid-cols-[280px_1fr] xl:grid-cols-[280px_1fr_280px] gap-4 px-2 sm:px-4">
+        <div className="hidden lg:block">
+          <LeftSidebar 
+            onDeadLink={showDeadLinkError} 
+            onCorruptTimestamps={corruptTimestamps}
+            onWatchMode={() => setWatchMode(true)}
+            onMarketMode={() => setMarketMode(true)}
+          />
+        </div>
         <NewsFeed
           posts={posts}
           onAddPost={addPost}
@@ -163,7 +173,9 @@ export default function App() {
           marketMode={marketMode}
           feelingMode={feelingMode}
         />
-        <RightSidebar onDeadLink={showDeadLinkError} />
+        <div className="hidden xl:block">
+          <RightSidebar onDeadLink={showDeadLinkError} />
+        </div>
       </div>
     </div>
   )
