@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, memo } from 'react'
 
 const EMOJI_RE = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu
 
-export default function Post({ post, onAddLike, onSubtractLike, onAddComment, onDuplicatePost, onDeadLink, watchMode, marketMode, feelingMode }) {
+function Post({ post, onAddLike, onSubtractLike, onAddComment, onDuplicatePost, onDeadLink, watchMode, marketMode, feelingMode }) {
   const [showComments, setShowComments] = useState(false)
   const [commentInput, setCommentInput]   = useState('')
   const [localComments, setLocalComments] = useState([])
@@ -28,6 +28,9 @@ export default function Post({ post, onAddLike, onSubtractLike, onAddComment, on
             alt={post.user}
             className="w-10 h-10 rounded-full object-cover bg-gray-200"
             onError={(e) => { e.target.style.display = 'none' }}
+            loading="lazy"
+            width="40"
+            height="40"
           />
           {post.avatar.includes('broken') && (
             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-500 text-sm font-bold absolute inset-0">
@@ -62,7 +65,7 @@ export default function Post({ post, onAddLike, onSubtractLike, onAddComment, on
           <span className="text-[10px] text-gray-600">fakebook-video://stream/0x{post.id.toString(16)}</span>
         </div>
       ) : post.image ? (
-        <img src={post.image} alt="post" className="post-image" />
+        <img src={post.image} alt="post" className="post-image" loading="lazy" width="600" height="400" />
       ) : null}
 
       {/* Reaction counts */}
@@ -130,6 +133,9 @@ export default function Post({ post, onAddLike, onSubtractLike, onAddComment, on
                 src="https://i.pravatar.cc/32?img=68"
                 alt="You"
                 className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                loading="lazy"
+                width="32"
+                height="32"
               />
               <div className="bg-fb-bg rounded-2xl px-3 py-1.5 text-sm">
                 <span className="font-semibold text-fb-text mr-1">You</span>
@@ -142,6 +148,9 @@ export default function Post({ post, onAddLike, onSubtractLike, onAddComment, on
               src="https://i.pravatar.cc/32?img=68"
               alt="You"
               className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+              loading="lazy"
+              width="32"
+              height="32"
             />
             <div className="flex-1 flex items-center bg-fb-bg rounded-full px-3 gap-2">
               <input
@@ -166,3 +175,5 @@ export default function Post({ post, onAddLike, onSubtractLike, onAddComment, on
     </div>
   )
 }
+
+export default memo(Post)

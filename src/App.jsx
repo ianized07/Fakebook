@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, lazy, Suspense } from 'react'
 import Navbar from './components/Navbar'
-import LeftSidebar from './components/LeftSidebar'
-import RightSidebar from './components/RightSidebar'
 import NewsFeed from './components/NewsFeed'
 import ErrorToast from './components/ErrorToast'
+
+const LeftSidebar = lazy(() => import('./components/LeftSidebar'))
+const RightSidebar = lazy(() => import('./components/RightSidebar'))
 
 const INITIAL_POSTS = [
   {
@@ -60,7 +61,7 @@ export default function App() {
   const [feelingMode, setFeelingMode] = useState(false)
 
   const showDeadLinkError = useCallback(() => {
-    const id = Date.now() + Math.random()
+    const id = crypto.randomUUID()
     setToasts((prev) => [...prev, { id }])
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id))
@@ -68,7 +69,7 @@ export default function App() {
   }, [])
 
   const show404Error = useCallback(() => {
-    const id = Date.now() + Math.random()
+    const id = crypto.randomUUID()
     setToasts((prev) => [...prev, { id, type: '404' }])
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id))
@@ -116,7 +117,7 @@ export default function App() {
     setPosts((prev) => {
       const idx = prev.findIndex((p) => p.id === id)
       if (idx === -1) return prev
-      const copy = { ...prev[idx], id: Date.now() + Math.random() }
+      const copy = { ...prev[idx], id: crypto.randomUUID() }
       return [...prev.slice(0, idx + 1), copy, ...prev.slice(idx + 1)]
     })
   }, [])
@@ -128,7 +129,7 @@ export default function App() {
 
   // BUG Logout: shows success message but doesn't log out
   const fakeLogout = useCallback(() => {
-    const id = Date.now() + Math.random()
+    const id = crypto.randomUUID()
     setToasts((prev) => [...prev, { id, message: 'Successfully logged out!' }])
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id))
@@ -153,12 +154,14 @@ export default function App() {
       />
       <div className="max-w-[1250px] mx-auto pt-[60px] grid grid-cols-1 lg:grid-cols-[280px_1fr] xl:grid-cols-[280px_1fr_280px] gap-4 px-2 sm:px-4">
         <div className="hidden lg:block">
-          <LeftSidebar 
-            onDeadLink={showDeadLinkError} 
-            onCorruptTimestamps={corruptTimestamps}
-            onWatchMode={() => setWatchMode(true)}
-            onMarketMode={() => setMarketMode(true)}
-          />
+          <Suspense fallback={<div className="w-[280px]" />}>
+            <LeftSidebar
+              onDeadLink={showDeadLinkError}
+              onCorruptTimestamps={corruptTimestamps}
+              onWatchMode={() => setWatchMode(true)}
+              onMarketMode={() => setMarketMode(true)}
+            />
+          </Suspense>
         </div>
         <NewsFeed
           posts={posts}
@@ -174,7 +177,9 @@ export default function App() {
           feelingMode={feelingMode}
         />
         <div className="hidden xl:block">
-          <RightSidebar onDeadLink={showDeadLinkError} />
+          <Suspense fallback={<div className="w-[280px]" />}>
+            <RightSidebar onDeadLink={showDeadLinkError} />
+          </Suspense>
         </div>
       </div>
     </div>

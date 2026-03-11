@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, memo } from 'react'
 
 const FRIEND_SUGGESTIONS = [
   { id: 1, name: 'Carlo Mendoza',  mutual: 4,  avatar: 'https://i.pravatar.cc/40?img=13' },
@@ -28,7 +28,7 @@ const SPONSORED = [
   },
 ]
 
-export default function RightSidebar({ onDeadLink }) {
+function RightSidebar({ onDeadLink }) {
   const [added, setAdded] = useState([])
 
   const toggleAdd = (id) => {
@@ -48,7 +48,7 @@ export default function RightSidebar({ onDeadLink }) {
         <div className="space-y-3">
           {SPONSORED.map((s) => (
             <a key={s.id} href={s.link} onClick={(e) => { e.preventDefault(); onDeadLink() }} className="flex gap-3 hover:bg-fb-hover rounded-lg p-1 transition-colors">
-              <img src={s.image} alt={s.brand} className="w-[120px] h-[80px] rounded-lg object-cover flex-shrink-0" />
+              <img src={s.image} alt={s.brand} className="w-[120px] h-[80px] rounded-lg object-cover flex-shrink-0" loading="lazy" width="120" height="80" />
               <div>
                 <p className="font-semibold text-sm text-fb-text">{s.brand}</p>
                 <p className="text-xs text-fb-secondary">{s.tagline}</p>
@@ -70,7 +70,7 @@ export default function RightSidebar({ onDeadLink }) {
         <div className="space-y-2">
           {FRIEND_SUGGESTIONS.map((f) => (
             <div key={f.id} className="flex items-center gap-2 p-1 hover:bg-fb-hover rounded-lg transition-colors">
-              <img src={f.avatar} alt={f.name} className="w-10 h-10 rounded-full object-cover" />
+              <img src={f.avatar} alt={f.name} className="w-10 h-10 rounded-full object-cover" loading="lazy" width="40" height="40" />
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm text-fb-text truncate">{f.name}</p>
                 <p className="text-xs text-fb-secondary">{f.mutual} mutual friends</p>
@@ -106,7 +106,7 @@ export default function RightSidebar({ onDeadLink }) {
           {ACTIVE_FRIENDS.map((f) => (
             <div key={f.id} onClick={onDeadLink} className="flex items-center gap-3 px-1 py-1.5 hover:bg-fb-hover rounded-lg cursor-pointer transition-colors">
               <div className="relative">
-                <img src={f.avatar} alt={f.name} className="w-9 h-9 rounded-full object-cover" />
+                <img src={f.avatar} alt={f.name} className="w-9 h-9 rounded-full object-cover" loading="lazy" width="36" height="36" />
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
               </div>
               <span className="text-sm font-medium text-fb-text">{f.name}</span>
@@ -117,3 +117,5 @@ export default function RightSidebar({ onDeadLink }) {
     </aside>
   )
 }
+
+export default memo(RightSidebar)

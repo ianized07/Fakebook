@@ -21,7 +21,9 @@ const ITEM_ACTIONS = {
   Marketplace: 'market',
 }
 
-export default function LeftSidebar({ onDeadLink, onCorruptTimestamps, onWatchMode, onMarketMode }) {
+import { memo } from 'react'
+
+function LeftSidebar({ onDeadLink, onCorruptTimestamps, onWatchMode, onMarketMode }) {
   const handleItem = (label) => {
     if (ITEM_ACTIONS[label] === 'timestamps') onCorruptTimestamps()
     else if (ITEM_ACTIONS[label] === 'watch') onWatchMode()
@@ -88,3 +90,5 @@ export default function LeftSidebar({ onDeadLink, onCorruptTimestamps, onWatchMo
     </aside>
   )
 }
+
+export default memo(LeftSidebar)
