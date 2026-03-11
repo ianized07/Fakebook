@@ -8,6 +8,8 @@ function StoryViewer({ users, startUserIndex, onClose }) {
   const [progress, setProgress] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const refs = useRef({ userIndex: startUserIndex, storyIndex: 0 })
+  const pointerDownTime = useRef(0)
+  const HOLD_THRESHOLD = 200
 
   useEffect(() => {
     refs.current = { userIndex, storyIndex }
@@ -132,16 +134,20 @@ function StoryViewer({ users, startUserIndex, onClose }) {
         <div className="absolute inset-0 flex z-10">
           <div
             className="flex-1 cursor-pointer"
-            onClick={goPrev}
-            onPointerDown={() => setIsPaused(true)}
-            onPointerUp={() => setIsPaused(false)}
+            onPointerDown={() => { pointerDownTime.current = Date.now(); setIsPaused(true) }}
+            onPointerUp={() => {
+              setIsPaused(false)
+              if (Date.now() - pointerDownTime.current < HOLD_THRESHOLD) goPrev()
+            }}
             onPointerLeave={() => setIsPaused(false)}
           />
           <div
             className="flex-1 cursor-pointer"
-            onClick={goNext}
-            onPointerDown={() => setIsPaused(true)}
-            onPointerUp={() => setIsPaused(false)}
+            onPointerDown={() => { pointerDownTime.current = Date.now(); setIsPaused(true) }}
+            onPointerUp={() => {
+              setIsPaused(false)
+              if (Date.now() - pointerDownTime.current < HOLD_THRESHOLD) goNext()
+            }}
             onPointerLeave={() => setIsPaused(false)}
           />
         </div>
